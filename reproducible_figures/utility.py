@@ -39,6 +39,7 @@ def save_reproducible_figure(fig_name: str,
             to create the figure. These will be embedded into the code.
         save_index: Whether to save the index of fig_data. Default is True.
         figures_dir: Directory where the figure will be saved.
+            Default is 'figures'.
 
     Usage:
     
