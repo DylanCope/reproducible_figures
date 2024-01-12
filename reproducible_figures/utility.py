@@ -13,6 +13,7 @@ def save_reproducible_figure(fig_name: str,
                              helper_fns: Optional[List[Callable]] = None,
                              additional_imports: Optional[List[str]] = None,
                              save_index: bool = False,
+                             show: bool = False,
                              figures_dir: str = 'figures'):
     """
     Creates and saves a figure, including the data and the code
@@ -38,6 +39,8 @@ def save_reproducible_figure(fig_name: str,
         additional_imports: Optional list of additional imports needed
             to create the figure. These will be embedded into the code.
         save_index: Whether to save the index of fig_data. Default is True.
+        show: Whether to show the figure. Default is False and the
+            figure is closed after saving.
         figures_dir: Directory where the figure will be saved.
             Default is 'figures'.
 
@@ -73,7 +76,11 @@ def save_reproducible_figure(fig_name: str,
         plt.savefig(f'{output_dir}/{fig_name}.pdf',
                     bbox_inches='tight')
 
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
+
     try:
         # Save the code used to generate the figure
 
