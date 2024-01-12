@@ -13,7 +13,7 @@ for your figures.
 ## Installation
 
 ```bash
-pip install reproducible_figures
+pip install reproducible-figures
 ```
 
 ## Example Usage
