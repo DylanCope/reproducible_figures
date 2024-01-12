@@ -1,7 +1,14 @@
 # Reproducible Figures
 
 
-A small utility to generate easily reproducible figures for scientific papers.
+A small Python utility to generate easily reproducible figures for scientific papers.
+I often find myself generating figures for papers and then having to go through
+needlessly tedious processes to regenerate them when I want to make a small change,
+so I made this package.
+By generating figures using this package a folder is created with the figure,
+the data used to generate the figure, and the code used to generate the figure.
+I recommend combining this with a version control system like git to track changes
+for your figures.
 
 ## Installation
 
