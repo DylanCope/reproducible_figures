@@ -1,35 +1,36 @@
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 
-matplotlib.use("pdf")
+matplotlib.use('pdf')
 
 
 def external_fn_with_internal_fn():
     def internal_fn(x):
         return np.sqrt(x)
-
     return internal_fn
+
 
 
 def create_figure_with_external_fn_with_internal_fn(data: pd.DataFrame):
     fig, ax = plt.subplots()
     preprocessor = external_fn_with_internal_fn()
-    data["x"] = preprocessor(data["x"])
-    ax.plot(data["x"], data["y"])
+    data['x'] = preprocessor(data['x'])
+    ax.plot(data['x'], data['y'])
     return fig
 
 
 def reproduce_figure():
-    data = pd.read_csv("figures/test_fig_external_fn_with_internal_fn/data.csv")
+    data = pd.read_csv('figures/test_fig_external_fn_with_internal_fn/data.csv')
     fig = create_figure_with_external_fn_with_internal_fn(data)
     fig.savefig(
-        "figures/test_fig_external_fn_with_internal_fn/test_fig_external_fn_with_internal_fn.pdf",
-        bbox_inches="tight",
+        'figures/test_fig_external_fn_with_internal_fn/test_fig_external_fn_with_internal_fn.pdf',
+        bbox_inches='tight'
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     reproduce_figure()
