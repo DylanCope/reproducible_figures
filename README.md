@@ -10,6 +10,15 @@ the data used to generate the figure, and the code used to generate the figure.
 I recommend combining this with a version control system like git to track changes
 for your figures.
 
+The code is built automatically by finding all the imports
+needed for create_figure and the functions or classes
+used in create_figure. This process is not flawless and can
+potentially miss some imports if they are not accessible
+through inspection. Additionally, if the code reads from
+external data sources, these may not be avaiable when
+reproducing the figure. However, it should work well
+for most cases!
+
 ## Installation
 
 ```bash
@@ -56,9 +65,43 @@ If you want to modify the figure, you can edit the `code.py` file and run it aga
 
 ## Advanced Usage
 
-**Additional Imports**
+The `save_reproducible_figure` function should naturally be able to handle most some quite complicated code structure. For example, suppose you have the following figure generating code:
 
-By default, the only libraries available in the `code.py` file are `pandas as pd` and `matplotlib.pyplot as plt`, `matplotlib`, `numpy as np`, and `seaborn as sns`. If you want to use other libraries, you can pass them to the `save_reproducible_figure` function:
+```python
+import numpy as np
+
+def external_fn(x):
+    return np.sqrt(x)
+
+
+class HelperClass:
+
+    def __init__(self, a: int):
+        self.a = a
+
+    def internal_fn(self, x):
+        return x * self.a
+
+    def preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Preprocess data."""
+        data['y'] = self.internal_fn(data['y'])
+        data['x'] = external_fn(data['x'])
+        return data
+
+
+def complex_create_figure(data: pd.DataFrame):
+    fig, ax = plt.subplots()
+    helper_class = HelperClass(a=10)
+    data = helper_class.preprocess_data(data)
+    ax.plot(data['x'], data['y'])
+    return fig
+```
+
+
+#### Additional Imports
+
+In general, you should not need to manually specify additional imports.
+However, in some cases it is unavoidable, so you can pass them to the `save_reproducible_figure` function:
 
 ```python
 save_reproducible_figure('test_save_figure',
@@ -71,7 +114,12 @@ This will add `import networkx as nx` to the `code.py` file.
 See the tests for an example using `networkx` to generate a figure.
 
 
-**Helper Functions**
+#### Additional Functions
+In most cases, this should not be needed as the automatic
+source builder should find all the functions needed. However,
+if there are any issues or you just want to preserve some code
+(e.g. code used to generate the data), the functions provided
+can be added here to be put into the source file.
 
 If you want to use helper functions in your `code.py` file, you can pass them to the `save_reproducible_figure` function. For example:
 

@@ -19,9 +19,8 @@ setuptools.setup(
     long_description=long_description,
     packages=setuptools.find_packages(where='.'),
     install_requires=[
-        'numpy',
         'pandas',
         'matplotlib',
-        'seaborn',
+        'black'
     ]
 )
