@@ -209,12 +209,3 @@ def test_save_figure_with_imported_from_module():
     save_reproducible_figure(fig_name, data,
                              create_figure_test_import_from)
     run_checks_after_saving(fig_name)
-
-
-# def test_conflicting_import_names():
-#     data = generate_random_data()
-#     fig_name = 'test_conflicting_import_names'
-#     save_reproducible_figure(fig_name, data,
-#                              create_test_figure_conflicting_imports,
-#                              additional_imports=['import numpy as np'])
-#     run_checks_after_saving(fig_name)

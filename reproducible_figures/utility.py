@@ -201,8 +201,6 @@ def find_imports(obj,
     searched_already.append(obj)
     imports = []
 
-    print(obj, searched_already)
-
     for member_name, member in inspect.getmembers(obj):
         if member_name.startswith('__'):
             continue
@@ -215,11 +213,9 @@ def find_imports(obj,
 
     if inspect.isfunction(obj):
         closure_vars = inspect.getclosurevars(obj)
-        print(closure_vars)
         for var_name, var_value in closure_vars.globals.items():
             if var_value is None:
                 continue
-            print(var_name, var_value)
 
             if inspect.ismodule(var_value):
                 module_name = var_value.__name__
