@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 from math import sqrt
-# from numpy import sqrt
 
 
 matplotlib.use('pdf')

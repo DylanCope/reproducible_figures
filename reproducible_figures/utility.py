@@ -191,9 +191,19 @@ def is_primitive(obj):
 
 
 def find_imports(obj,
-                 main_module=None,
+                 main_module: Optional[ModuleType] = None,
                  searched_already: List[Callable] = None) -> List[str]:
-    """Recursively finds the imports needed for a function."""
+    """
+    Recursively finds the imports needed for a function.
+
+    Args:
+        obj: Function to find the imports for.
+        main_module: Main module of the function. Used to determine
+            whether a function is defined in the main module, or
+            can be imported from another module.
+        searched_already: List of functions that have already been searched.
+            This is used to avoid searching the same function multiple times.
+    """
     searched_already = searched_already or []
     if main_module is None:
         main_module = inspect.getmodule(obj)
@@ -209,7 +219,8 @@ def find_imports(obj,
 
     if inspect.getmodule(obj) not in [main_module, None]:
         module = inspect.getmodule(obj)
-        imports.append(f'from {module.__name__} import {obj.__name__}')
+        if hasattr(module, '__name__') and hasattr(obj, '__name__'):
+            imports.append(f'from {module.__name__} import {obj.__name__}')
 
     if inspect.isfunction(obj):
         closure_vars = inspect.getclosurevars(obj)
@@ -233,6 +244,17 @@ def find_imports(obj,
 def build_globals_source(closure_vars: inspect.ClosureVars,
                          main_module: ModuleType,
                          built_already: list) -> str:
+    """
+    Builds the source code for the global variables used in a function.
+
+    Args:
+        closure_vars: Closure variables of the function.
+        main_module: Main module of the function. Used to determine
+            whether a function is defined in the main module, or
+            can be imported from another module.
+        built_already: List of functions that have already been built.
+            This is used to avoid building the same function multiple times.
+    """
     source = ""
 
     for var_name, var_value in closure_vars.globals.items():
@@ -253,7 +275,17 @@ def build_globals_source(closure_vars: inspect.ClosureVars,
 def build_function_source(fn: Callable,
                           main_module: Optional[ModuleType] = None,
                           built_already: list = None) -> str:
-    """Recursively builds the source code for a function."""
+    """
+    Recursively builds the source code for a function.
+
+    Args:
+        fn: Function to build the source code for.
+        main_module: Main module of the function. Used to determine
+            whether a function is defined in the main module, or
+            can be imported from another module.
+        built_already: List of functions that have already been built.
+            This is used to avoid building the same function multiple times.
+    """
     built_already = built_already or []
     built_already.append(fn)
     main_module = main_module or inspect.getmodule(fn)
@@ -272,7 +304,17 @@ def build_function_source(fn: Callable,
 def build_class_source(cls: type,
                        main_module: Optional[ModuleType] = None,
                        built_already: Optional[list] = None) -> str:
-    """Builds the source code for a class."""
+    """
+    Builds the source code for a class.
+
+    Args:
+        cls: Class to build the source code for.
+        main_module: Main module of the function. Used to determine
+            whether an object is defined in the main module, or
+            can be imported from another module.
+        built_already: List of functions that have already been built.
+            This is used to avoid building the same function multiple times.
+    """
     built_already = built_already or []
     built_already.append(cls)
 
