@@ -1,3 +1,4 @@
+from reproducible_figures.plotting import set_plotting_style
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,10 +6,6 @@ import pandas as pd
 
 
 matplotlib.use("pdf")
-
-
-def random_additional_fn():
-    print("Unused but here anyways!")
 
 
 def create_test_figure(data: pd.DataFrame) -> plt.Figure:
@@ -19,11 +16,16 @@ def create_test_figure(data: pd.DataFrame) -> plt.Figure:
     return fig
 
 
+def create_figure_with_plotting_style(data: pd.DataFrame):
+    set_plotting_style()
+    create_test_figure(data)
+
+
 def reproduce_figure():
-    data = pd.read_csv("figures/test_fig_additional_fn/data.csv")
-    fig = create_test_figure(data)
-    fig.savefig(
-        "figures/test_fig_additional_fn/test_fig_additional_fn.pdf",
+    data = pd.read_csv("figures/test_fig_with_plotting_style/data.csv")
+    create_figure_with_plotting_style(data)
+    plt.savefig(
+        "figures/test_fig_with_plotting_style/test_fig_with_plotting_style.pdf",
         bbox_inches="tight",
         dpi=1000,
     )

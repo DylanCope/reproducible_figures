@@ -1,3 +1,5 @@
+from cycler import V
+from reproducible_figures.plotting import set_plotting_style
 from ..utility import save_reproducible_figure
 
 from pathlib import Path
@@ -17,22 +19,23 @@ matplotlib.use('pdf')
 GLOBAL_COL_TO_USE = 'z'
 
 
-def generate_random_data() -> pd.DataFrame:
+def generate_random_data(n_points: int = 1000) -> pd.DataFrame:
     """Generate random data."""
     return pd.DataFrame({
-        'x': range(10),
-        'y': np.random.normal(size=10)
+        'x': range(n_points),
+        'y': np.random.normal(size=n_points)
     })
 
 
 def create_test_figure(data: pd.DataFrame) -> plt.Figure:
     """Create a figure."""
     fig, ax = plt.subplots()
-    ax.plot(data['x'], data['y'])
+    y = np.sin(data['x'] * 2 * np.pi / 1000) + 0.2 * data['y']
+    ax.plot(data['x'], y)
     return fig
 
 
-def run_checks_after_saving(fig_name: str):
+def run_checks_after_saving(fig_name: str, check_code_runs: bool = True):
 
     figure_dir = f'figures/{fig_name}'
 
@@ -40,17 +43,19 @@ def run_checks_after_saving(fig_name: str):
     assert Path(f'{figure_dir}/data.csv').exists()
     assert Path(f'{figure_dir}/code.py').exists()
 
-    with open(f'{figure_dir}/{fig_name}.pdf') as f:
-        figure_file_before = f.buffer.read()
+    if check_code_runs:
+        with open(f'{figure_dir}/{fig_name}.pdf') as f:
+            figure_file_before = f.buffer.read()
 
-    res = subprocess.run(['python', f'{figure_dir}/code.py'])
-    assert res.returncode == 0
+        res = subprocess.run(['python', f'{figure_dir}/code.py'])
+        assert res.returncode == 0, \
+            f"Running code.py should not return an error code: {res.stderr}"
 
-    with open(f'{figure_dir}/{fig_name}.pdf') as f:
-        figure_file_after = f.buffer.read()
+        with open(f'{figure_dir}/{fig_name}.pdf') as f:
+            figure_file_after = f.buffer.read()
 
-    assert figure_file_before != figure_file_after, \
-        "Figure file should have been modified after running code.py"
+        assert figure_file_before != figure_file_after, \
+            "Figure file should have been modified after running code.py"
 
 
 def test_simple_save_figure():
@@ -58,6 +63,20 @@ def test_simple_save_figure():
     fig_name = 'test_fig'
     save_reproducible_figure(fig_name, data, create_test_figure)
     run_checks_after_saving(fig_name)
+
+
+def create_figure_with_plotting_style(data: pd.DataFrame):
+    set_plotting_style()
+    create_test_figure(data)
+
+
+def test_save_figure_with_plotting_style():
+    data = generate_random_data()
+    fig_name = 'test_fig_with_plotting_style'
+    save_reproducible_figure(fig_name, data,
+                             create_figure_with_plotting_style)
+    # TODO: figure out how to run code that imports from the module during test
+    run_checks_after_saving(fig_name, check_code_runs=False)
 
 
 def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:

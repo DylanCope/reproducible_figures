@@ -38,7 +38,9 @@ def reproduce_figure():
     data = pd.read_csv("figures/test_fig_helper_class/data.csv")
     fig = create_figure_with_helper_class(data)
     fig.savefig(
-        "figures/test_fig_helper_class/test_fig_helper_class.pdf", bbox_inches="tight"
+        "figures/test_fig_helper_class/test_fig_helper_class.pdf",
+        bbox_inches="tight",
+        dpi=1000,
     )
 
 

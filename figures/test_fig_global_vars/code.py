@@ -20,7 +20,9 @@ def reproduce_figure():
     data = pd.read_csv("figures/test_fig_global_vars/data.csv")
     fig = create_figure_with_global_vars(data)
     fig.savefig(
-        "figures/test_fig_global_vars/test_fig_global_vars.pdf", bbox_inches="tight"
+        "figures/test_fig_global_vars/test_fig_global_vars.pdf",
+        bbox_inches="tight",
+        dpi=1000,
     )
 
 

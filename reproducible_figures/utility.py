@@ -18,6 +18,7 @@ def save_reproducible_figure(fig_name: str,
                              figure_file_fmt: Optional[str] = None,
                              figures_dir: str = 'figures',
                              auto_format: bool = True,
+                             figure_dpi: int = 1000,
                              additional_imports: Optional[List[str]] = None,
                              additional_fns: Optional[Callable] = None):
     """
@@ -52,6 +53,8 @@ def save_reproducible_figure(fig_name: str,
             None, which will use the matplotlib backend.
         figures_dir: Directory where the figure will be saved.
             Default is 'figures'.
+        figure_dpi: DPI to use for saving the figure. Default is 1000,
+            which will create a high resolution figure ready for publication.
         auto_format: Whether to autoformat the code. Default is True.
             Relies on black being installed.
         additional_imports: Additional imports needed to create the figure.
@@ -101,10 +104,10 @@ def save_reproducible_figure(fig_name: str,
     figure_file_fmt = figure_file_fmt or matplotlib_backend
     if fig is not None:
         fig.savefig(f'{output_dir}/{fig_name}.{figure_file_fmt}',
-                    bbox_inches='tight')
+                    bbox_inches='tight', dpi=figure_dpi)
     else:
         plt.savefig(f'{output_dir}/{fig_name}.{figure_file_fmt}',
-                    bbox_inches='tight')
+                    bbox_inches='tight', dpi=figure_dpi)
 
     if show:
         plt.show()
@@ -151,7 +154,7 @@ def reproduce_figure():
     {create_fig_code}
     {save_fig_code_prefix}.savefig(
         '{output_dir}/{fig_name}.{figure_file_fmt}',
-        bbox_inches='tight'
+        bbox_inches='tight', dpi={figure_dpi}
     )
 
 
@@ -222,7 +225,7 @@ def find_imports(obj,
         if hasattr(module, '__name__') and hasattr(obj, '__name__'):
             imports.append(f'from {module.__name__} import {obj.__name__}')
 
-    if inspect.isfunction(obj):
+    elif inspect.isfunction(obj):
         closure_vars = inspect.getclosurevars(obj)
         for var_name, var_value in closure_vars.globals.items():
             if var_value is None:

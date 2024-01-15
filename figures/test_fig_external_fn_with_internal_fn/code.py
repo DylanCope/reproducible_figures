@@ -28,6 +28,7 @@ def reproduce_figure():
     fig.savefig(
         "figures/test_fig_external_fn_with_internal_fn/test_fig_external_fn_with_internal_fn.pdf",
         bbox_inches="tight",
+        dpi=1000,
     )
 
 

@@ -24,7 +24,9 @@ def reproduce_figure():
     data = pd.read_csv("figures/test_fig_preprocessor/data.csv")
     fig = create_test_figure_with_helper_fns(data)
     fig.savefig(
-        "figures/test_fig_preprocessor/test_fig_preprocessor.pdf", bbox_inches="tight"
+        "figures/test_fig_preprocessor/test_fig_preprocessor.pdf",
+        bbox_inches="tight",
+        dpi=1000,
     )
 
 

@@ -16,7 +16,7 @@ def create_nx_figure(data: pd.DataFrame):
 def reproduce_figure():
     data = pd.read_csv("figures/test_nx_fig/data.csv")
     create_nx_figure(data)
-    plt.savefig("figures/test_nx_fig/test_nx_fig.pdf", bbox_inches="tight")
+    plt.savefig("figures/test_nx_fig/test_nx_fig.pdf", bbox_inches="tight", dpi=1000)
 
 
 if __name__ == "__main__":
