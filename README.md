@@ -72,6 +72,12 @@ The function you use to create the figure can apply any stylisation you want to 
 This function checks if LaTeX is available and uses it if it is.
 By default, it uses the Times New Roman font for any textmode text, and Computer Modern for any mathmode text.
 
+In order to setup LaTeX in Linux, you can run:
+```bash
+> apt-get install texlive-binaries texlive texlive-latex-extra texlive-fonts-recommended dvipng cm-super -y
+> pip install latex
+```
+
 ### Preparing and Using Figures in LaTeX Documents
 
 To make sure that the figure looks good in a publication, you can use the `set_plotting_style` function with an appropriate figure size and font scale for your document.
