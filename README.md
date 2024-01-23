@@ -2,22 +2,18 @@
 
 
 A small Python utility to generate easily reproducible figures for scientific papers.
-I often find myself generating figures for papers and then having to go through
-needlessly tedious processes to regenerate them when I want to make a small change,
-so I made this package.
+I often find myself generating figures for papers and then later having to go through needlessly tedious processes to regenerate them when I want to make a small change, so I made this package.
 By generating figures using this package a folder is created with the figure,
 the data used to generate the figure, and the code used to generate the figure.
-I recommend combining this with a version control system like git to track changes
-for your figures.
+I recommend combining this with a version control system like git to track changes for your figures.
 
-The code is built automatically by finding all the imports
+The reproduction code is built automatically by finding all the imports
 needed for create_figure and the functions or classes
 used in create_figure. This process is not flawless and can
 potentially miss some imports if they are not accessible
-through inspection. Additionally, if the code reads from
-external data sources, these may not be avaiable when
-reproducing the figure. However, it should work well
-for most cases!
+through automated inspection. Additionally, if the code reads from
+external data sources, these may not be available when
+reproducing the figure. However, it should work well for most cases!
 
 ## Installation
 
@@ -45,7 +41,14 @@ data = pd.DataFrame({
 
 save_reproducible_figure('test_save_figure', data, create_figure)
 ```
-This will create the folder `figures/test_save_figure` with the following structure:
+*Note:* The `create_figure` function must take a single argument, which is the data used to generate the figure, and should not call `plt.show`, `plt.close`, or `plt.savefig`.
+If you want show the figure at the same time, you can pass the `show=True` argument to the `save_reproducible_figure` function.
+
+```python
+save_reproducible_figure('test_save_figure', data, create_figure, show=True)
+```
+
+After calling `save_reproducible_figure`, the data, figure and code will be saved to the folder `figures/test_save_figure`:
 
 ```
 figures/test_save_figure
@@ -62,6 +65,46 @@ python figures/test_save_figure/code.py
 ```
 
 If you want to modify the figure, you can edit the `code.py` file and run it again.
+
+## Figure Style
+
+The function you use to create the figure can apply any stylisation you want to the figure, but the package provides a function `set_plotting_style`.
+This function checks if LaTeX is available and uses it if it is.
+By default, it uses the Times New Roman font for any textmode text, and Computer Modern for any mathmode text.
+
+### Preparing and Using Figures in LaTeX Documents
+
+To make sure that the figure looks good in a publication, you can use the `set_plotting_style` function with an appropriate figure size and font scale for your document.
+I have found that a figure size of `(10, 6)` with a font scale of `2.5` works well for a single column figure in a LaTeX document with 11pt Times New Roman font. For example:
+
+```python
+from reproducible_figures import save_reproducible_figure
+from reproducbile_figures.plotting import set_plotting_style
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+def create_figure(data):
+    set_plotting_style(font_size=2.5)
+    plt.figure(figsize=(10, 6))
+    ...  # Create figure code here
+    return fig
+
+save_reproducible_figure('my_figure', data, create_figure)
+```
+
+In order to embed the figure into your document, I recommend:
+```latex
+\includegraphics[height=3.5cm]{figures/my_figure.pdf}
+```
+
+The following is a screenshot of an example figure created using the above parameters in a LaTeX document:
+
+<p align="center">
+<img src="./assets/example-figure.png" width=500px>
+</p>
+
+Note that the text in the figure is the same font and a similar size as the text in the document.
 
 ## Advanced Usage
 
@@ -140,3 +183,13 @@ save_reproducible_figure('test_fig_preprocessor', data,
                          create_test_figure_with_helper_fns,
                          helper_fns=[preprocess_data])
 ```
+
+
+### Reproducing Figures in VSCode
+
+If you use VSCode, you can easily reproduce the figure with the `Python: File` run configuration. Select the gear icon in the "Run and Debug" tab to create a new run configuration.
+Then with the `code.py` file as your active tab, select `Python: File` as the run configuration and run it. Or you can use the keyboard shortcut `F5` to run the file.
+
+<p align="center">
+<img src="./assets/vscode-screenshot.png" width=500px>
+</p>

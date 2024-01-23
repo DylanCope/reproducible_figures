@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 import subprocess
 import seaborn as sns
 
@@ -19,8 +19,13 @@ def is_tex_available() -> bool:
         return False
 
 
+def get_latex_preamble_string(latex_packages: List[str]) -> str:
+    return ' '.join([f'\\usepackage{{{package}}}' for package in latex_packages])
+
+
 def set_plotting_style(font_scale: float = 1.5,
                        use_times_font: bool = True,
+                       latex_packages: Optional[List[str]] = None,
                        rc: Optional[dict] = None):
     """
     Set the default plotting style for matplotlib and seaborn.
@@ -31,7 +36,14 @@ def set_plotting_style(font_scale: float = 1.5,
         "text.usetex": use_tex,
         'savefig.facecolor': 'white',
     }
-    if use_tex and use_times_font:
-        default_rc['text.latex.preamble'] = r'\usepackage{times}'
+    if use_tex:
+        latex_packages = latex_packages or []
+        if use_times_font:
+            latex_packages.append('times')
+        if latex_packages:
+            default_rc['text.latex.preamble'] = \
+                get_latex_preamble_string(latex_packages)
+
     rc = {**default_rc, **(rc or {})}
+
     sns.set(font_scale=font_scale, rc=rc)
