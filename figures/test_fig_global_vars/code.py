@@ -1,3 +1,4 @@
+from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -17,8 +18,11 @@ def create_figure_with_global_vars(data: pd.DataFrame):
 
 
 def reproduce_figure():
-    data = pd.read_csv("figures/test_fig_global_vars/data.csv")
-    fig = create_figure_with_global_vars(data)
+    data = [
+        pd.read_csv(csv_path)
+        for csv_path in Path("figures/test_fig_global_vars").glob("data_*.csv")
+    ]
+    fig = create_figure_with_global_vars(*data)
     fig.savefig(
         "figures/test_fig_global_vars/test_fig_global_vars.pdf",
         bbox_inches="tight",

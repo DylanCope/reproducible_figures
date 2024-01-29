@@ -1,3 +1,4 @@
+from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,8 +24,13 @@ def create_figure_with_external_fn_with_internal_fn(data: pd.DataFrame):
 
 
 def reproduce_figure():
-    data = pd.read_csv("figures/test_fig_external_fn_with_internal_fn/data.csv")
-    fig = create_figure_with_external_fn_with_internal_fn(data)
+    data = [
+        pd.read_csv(csv_path)
+        for csv_path in Path("figures/test_fig_external_fn_with_internal_fn").glob(
+            "data_*.csv"
+        )
+    ]
+    fig = create_figure_with_external_fn_with_internal_fn(*data)
     fig.savefig(
         "figures/test_fig_external_fn_with_internal_fn/test_fig_external_fn_with_internal_fn.pdf",
         bbox_inches="tight",

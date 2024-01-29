@@ -114,6 +114,22 @@ Note that the text in the figure is the same font and a similar size as the text
 
 ## Advanced Usage
 
+### Multiple Data Sources
+
+The `save_reproducible_figure` function can handle multiple data sources as follows:
+    
+```python
+def create_figure(data1, data2):
+    ...
+
+save_reproducible_figure('test_save_figure', (data1, data2), create_figure)
+```
+
+Each dataframe will be saved to a separate csv file, and the `create_figure` function will be called with the dataframes as arguments.
+
+### Complex Figure Generation Code
+
+
 The `save_reproducible_figure` function should naturally be able to handle most some quite complicated code structure. For example, suppose you have the following figure generating code:
 
 ```python
@@ -197,5 +213,5 @@ If you use VSCode, you can easily reproduce the figure with the `Python: File` r
 Then with the `code.py` file as your active tab, select `Python: File` as the run configuration and run it. Or you can use the keyboard shortcut `F5` to run the file.
 
 <p align="center">
-<img src="./assets/vscode-screenshot.png" width=500px>
+<img src="./assets/vscode-screenshot.png" width=600px>
 </p>

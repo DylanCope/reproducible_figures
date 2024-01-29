@@ -20,18 +20,21 @@ GLOBAL_COL_TO_USE = 'z'
 
 
 def generate_random_data(n_points: int = 1000) -> pd.DataFrame:
-    """Generate random data."""
-    return pd.DataFrame({
+    """Generate random sine wave data."""
+    df = pd.DataFrame({
         'x': range(n_points),
         'y': np.random.normal(size=n_points)
     })
+
+    df['y'] = np.sin(df['x'] * 2 * np.pi / 1000) + 0.2 * df['y']
+
+    return df
 
 
 def create_test_figure(data: pd.DataFrame) -> plt.Figure:
     """Create a figure."""
     fig, ax = plt.subplots()
-    y = np.sin(data['x'] * 2 * np.pi / 1000) + 0.2 * data['y']
-    ax.plot(data['x'], y)
+    ax.plot(data.x, data.y)
     return fig
 
 
@@ -40,7 +43,7 @@ def run_checks_after_saving(fig_name: str, check_code_runs: bool = True):
     figure_dir = f'figures/{fig_name}'
 
     assert Path(f'{figure_dir}/{fig_name}.pdf').exists()
-    assert Path(f'{figure_dir}/data.csv').exists()
+    assert len(list(Path(figure_dir).glob('data_*.csv'))) > 0
     assert Path(f'{figure_dir}/code.py').exists()
 
     if check_code_runs:
@@ -62,6 +65,26 @@ def test_simple_save_figure():
     data = generate_random_data()
     fig_name = 'test_fig'
     save_reproducible_figure(fig_name, data, create_test_figure)
+    run_checks_after_saving(fig_name)
+
+
+
+def create_test_figure_multiple_frames(data1: pd.DataFrame,
+                                       data2: pd.DataFrame) -> plt.Figure:
+    """Create a figure."""
+    fig, ax = plt.subplots()
+    ax.plot(data1.x, data1.y)
+    ax.plot(data2.x, data2.y)
+    return fig
+
+
+def test_save_figure_multiple_data_frames():
+    data1 = generate_random_data()
+    data2 = generate_random_data()
+    data2.x = data2.x + data2.x.mean()
+    fig_name = 'test_fig_multiple_data_frames'
+    save_reproducible_figure(fig_name, (data1, data2),
+                             create_test_figure_multiple_frames)
     run_checks_after_saving(fig_name)
 
 

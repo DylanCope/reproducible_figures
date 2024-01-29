@@ -1,3 +1,4 @@
+from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -21,8 +22,11 @@ def create_test_figure_with_helper_fns(data: pd.DataFrame) -> plt.Figure:
 
 
 def reproduce_figure():
-    data = pd.read_csv("figures/test_fig_preprocessor/data.csv")
-    fig = create_test_figure_with_helper_fns(data)
+    data = [
+        pd.read_csv(csv_path)
+        for csv_path in Path("figures/test_fig_preprocessor").glob("data_*.csv")
+    ]
+    fig = create_test_figure_with_helper_fns(*data)
     fig.savefig(
         "figures/test_fig_preprocessor/test_fig_preprocessor.pdf",
         bbox_inches="tight",

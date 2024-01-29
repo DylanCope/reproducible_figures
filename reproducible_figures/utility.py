@@ -1,5 +1,5 @@
 from types import ModuleType
-from typing import Callable, List, Optional
+from typing import Callable, Iterable, List, Optional, Union
 
 from pathlib import Path
 import inspect
@@ -10,7 +10,7 @@ import pandas as pd
 
 
 def save_reproducible_figure(fig_name: str,
-                             fig_data: pd.DataFrame,
+                             fig_data: Union[pd.DataFrame, Iterable[pd.DataFrame]],
                              create_figure: Callable[[pd.DataFrame], plt.Figure],
                              save_index: bool = False,
                              show: bool = False,
@@ -98,8 +98,13 @@ def save_reproducible_figure(fig_name: str,
     output_dir = f'{figures_dir}/{fig_name}'
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-    fig_data.to_csv(f'{output_dir}/data.csv', index=save_index)
-    fig = create_figure(fig_data)
+    if isinstance(fig_data, pd.DataFrame):
+        fig_data = [fig_data]
+
+    for i, df in enumerate(fig_data):
+        df.to_csv(f'{output_dir}/data_{i}.csv', index=save_index)
+
+    fig = create_figure(*fig_data)
 
     figure_file_fmt = figure_file_fmt or matplotlib_backend
     if fig is not None:
@@ -115,17 +120,19 @@ def save_reproducible_figure(fig_name: str,
         plt.close()
 
     # Save the code used to generate the figure
-    default_imports = ['import matplotlib', 'import pandas as pd']
+    default_imports = ['import matplotlib',
+                       'import pandas as pd',
+                       'from pathlib import Path']
     if additional_imports:
         default_imports += additional_imports
 
     if fig is None:
         save_fig_code_prefix = "plt"
         default_imports.append('import matplotlib.pyplot as plt')
-        create_fig_code = f"{create_figure.__name__}(data)"
+        create_fig_code = f"{create_figure.__name__}(*data)"
     else:
         save_fig_code_prefix = "fig"
-        create_fig_code = f"fig = {create_figure.__name__}(data)"
+        create_fig_code = f"fig = {create_figure.__name__}(*data)"
 
     imports = find_imports(create_figure)
 
@@ -150,7 +157,10 @@ matplotlib.use({matplotlib_backend!r})
 {build_function_source(create_figure)}
 
 def reproduce_figure():
-    data = pd.read_csv('{output_dir}/data.csv')
+    data = [
+        pd.read_csv(csv_path)
+        for csv_path in Path('{output_dir}').glob('data_*.csv')
+    ]
     {create_fig_code}
     {save_fig_code_prefix}.savefig(
         '{output_dir}/{fig_name}.{figure_file_fmt}',
