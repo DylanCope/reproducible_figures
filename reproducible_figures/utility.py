@@ -20,7 +20,8 @@ def save_reproducible_figure(fig_name: str,
                              auto_format: bool = True,
                              figure_dpi: int = 1000,
                              additional_imports: Optional[List[str]] = None,
-                             additional_fns: Optional[Callable] = None):
+                             additional_fns: Optional[Callable] = None,
+                             **kwargs_for_create_figure):
     """
     Creates and saves a figure, including the data and the code
     used to create the figure. This allows the figure to be
@@ -67,6 +68,7 @@ def save_reproducible_figure(fig_name: str,
             if there are any issues or you just want to preserve some code
             (e.g. code used to generate the data), the functions provided
             can be added here to be put into the source file.
+        kwargs_for_create_figure: Additional keyword arguments to pass
 
     Example Usage:
 
@@ -104,7 +106,7 @@ def save_reproducible_figure(fig_name: str,
     for i, df in enumerate(fig_data):
         df.to_csv(f'{output_dir}/data_{i}.csv', index=save_index)
 
-    fig = create_figure(*fig_data)
+    fig = create_figure(*fig_data, **kwargs_for_create_figure)
 
     figure_file_fmt = figure_file_fmt or matplotlib_backend
     if fig is not None:
@@ -126,13 +128,20 @@ def save_reproducible_figure(fig_name: str,
     if additional_imports:
         default_imports += additional_imports
 
+    if kwargs_for_create_figure:
+        kwargs_str = ',' + ', '.join(
+            f'{k}={v!r}' for k, v in kwargs_for_create_figure.items()
+        )
+    else:
+        kwargs_str = ''
+
     if fig is None:
         save_fig_code_prefix = "plt"
         default_imports.append('import matplotlib.pyplot as plt')
-        create_fig_code = f"{create_figure.__name__}(*data)"
+        create_fig_code = f"{create_figure.__name__}(*data{kwargs_str})"
     else:
         save_fig_code_prefix = "fig"
-        create_fig_code = f"fig = {create_figure.__name__}(*data)"
+        create_fig_code = f"fig = {create_figure.__name__}(*data{kwargs_str})"
 
     imports = find_imports(create_figure)
 
