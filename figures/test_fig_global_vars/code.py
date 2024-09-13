@@ -20,7 +20,7 @@ def create_figure_with_global_vars(data: pd.DataFrame):
 def reproduce_figure():
     data = [
         pd.read_csv(csv_path)
-        for csv_path in Path("figures/test_fig_global_vars").glob("data_*.csv")
+        for csv_path in sorted(Path("figures/test_fig_global_vars").glob("data_*.csv"))
     ]
     fig = create_figure_with_global_vars(*data)
     fig.savefig(

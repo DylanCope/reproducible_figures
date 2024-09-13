@@ -20,7 +20,9 @@ def create_test_figure_multiple_frames(
 def reproduce_figure():
     data = [
         pd.read_csv(csv_path)
-        for csv_path in Path("figures/test_fig_multiple_data_frames").glob("data_*.csv")
+        for csv_path in sorted(
+            Path("figures/test_fig_multiple_data_frames").glob("data_*.csv")
+        )
     ]
     fig = create_test_figure_multiple_frames(*data)
     fig.savefig(

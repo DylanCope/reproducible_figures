@@ -38,7 +38,7 @@ def create_figure_with_helper_class(data: pd.DataFrame):
 def reproduce_figure():
     data = [
         pd.read_csv(csv_path)
-        for csv_path in Path("figures/test_fig_helper_class").glob("data_*.csv")
+        for csv_path in sorted(Path("figures/test_fig_helper_class").glob("data_*.csv"))
     ]
     fig = create_figure_with_helper_class(*data)
     fig.savefig(

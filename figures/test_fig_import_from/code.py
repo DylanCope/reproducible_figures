@@ -17,7 +17,7 @@ def create_figure_test_import_from(data: pd.DataFrame):
 def reproduce_figure():
     data = [
         pd.read_csv(csv_path)
-        for csv_path in Path("figures/test_fig_import_from").glob("data_*.csv")
+        for csv_path in sorted(Path("figures/test_fig_import_from").glob("data_*.csv"))
     ]
     create_figure_test_import_from(*data)
     plt.savefig(

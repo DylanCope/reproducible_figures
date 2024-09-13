@@ -159,7 +159,7 @@ matplotlib.use({matplotlib_backend!r})
 def reproduce_figure():
     data = [
         pd.read_csv(csv_path)
-        for csv_path in Path('{output_dir}').glob('data_*.csv')
+        for csv_path in sorted(Path('{output_dir}').glob('data_*.csv'))
     ]
     {create_fig_code}
     {save_fig_code_prefix}.savefig(
