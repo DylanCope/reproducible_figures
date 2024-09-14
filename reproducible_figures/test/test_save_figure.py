@@ -68,6 +68,21 @@ def test_simple_save_figure():
     run_checks_after_saving(fig_name)
 
 
+def create_test_figure_with_kwargs(data: pd.DataFrame, value: float) -> plt.Figure:
+    """Create a figure."""
+    fig, ax = plt.subplots()
+    ax.plot(data.x, data.y)
+    ax.hlines(value, data.x.min(), data.x.max())
+    return fig
+
+
+def test_save_figure_with_kwargs():
+    data = generate_random_data()
+    fig_name = 'test_fig_with_kwargs'
+    value = data.y.mean()
+    save_reproducible_figure(fig_name, data, create_test_figure_with_kwargs, value=value)
+    run_checks_after_saving(fig_name)
+
 
 def create_test_figure_multiple_frames(data1: pd.DataFrame,
                                        data2: pd.DataFrame) -> plt.Figure:
